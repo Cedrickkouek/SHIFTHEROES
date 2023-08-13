@@ -1,3 +1,4 @@
+import time
 import requests
 
 #Recupere les differents plannings
@@ -5,15 +6,15 @@ headers = {
     'Authorization': 'Bearer 950838ab4e6b1da65cf99b8c02ed8b9b',
 }
 
-response = requests.get('https://shiftheroes.fr/api/v1/plannings', headers=headers)
+response0 = requests.get('https://shiftheroes.fr/api/v1/plannings', headers=headers)
 
 # print(response.json()[2]['id']) #Get the id du troisieme type de planning dont l'index est 2
 
-id_planning =  response.json()[0]['id'] 
+id_planning =  response0.json()[0]['id'] 
 
-#Recuperer les crenaux(shifts) lier aux planning du 3eme type
-response = requests.get('https://shiftheroes.fr/api/v1/plannings/' + id_planning + '/shifts', headers=headers)
-
+#Recuperer les crenaux(shifts) lier aux planning du type daily avec index 0 dans la reponse Json
+response1 = requests.get('https://shiftheroes.fr/api/v1/plannings/' + id_planning + '/shifts', headers=headers)
+#print(response1.json())
 
 ##print(response.json())
 ##id_shift =  response.json()[0]['id']
@@ -25,9 +26,20 @@ response = requests.get('https://shiftheroes.fr/api/v1/plannings/' + id_planning
 
 
 #iterate through all elements of the table of shifts and book them all
-shift =  response.json()
+shift =  response1.json()
 for i in shift:
     id_shift =  i['id']
     print(id_shift)
-    response = requests.post('https://shiftheroes.fr/api/v1/plannings/' + id_planning + '/shifts/' + id_shift + '/reservations', headers=headers)
-    print(response)    
+    #response = requests.post('https://shiftheroes.fr/api/v1/plannings/' + id_planning + '/shifts/' + id_shift + '/reservations', headers=headers)
+    #print(response)
+    
+while True:
+    response2 = requests.get('https://shiftheroes.fr/api/v1/plannings/' + id_planning + '/shifts', headers=headers)
+    if response2.json() != response1.json():
+        response1 = response2
+        shift0 = response2.json()
+        for i in shift0:
+            id_shift1 =  i['id']
+            response = requests.post('https://shiftheroes.fr/api/v1/plannings/' + id_planning + '/shifts/' + id_shift1 + '/reservations', headers=headers)
+            print(response.json())
+    time.sleep(2)
