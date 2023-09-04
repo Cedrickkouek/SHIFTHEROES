@@ -9,7 +9,24 @@ headers = {
 start_liste = requests.get('https://shiftheroes.fr/api/v1/plannings?type=daily', headers=headers).json()
 actual_liste = requests.get('https://shiftheroes.fr/api/v1/plannings?type=daily', headers=headers).json()
 
-while start_liste != actual_liste:
+while start_liste == actual_liste:
+    time.sleep(1)
+    print(".", end="", flush=True)
+    actual_liste = requests.get('https://shiftheroes.fr/api/v1/plannings?type=daily', headers=headers).json() 
+    print(actual_liste)
+
+nouveauPlanning = actual_liste[0]['id']
+listeCrenaux = requests.get('https://shiftheroes.fr/api/v1/plannings/' + nouveauPlanning + '/shifts', headers=headers).json()
+
+for crenau in listeCrenaux:
+    id_shift =  crenau['id']
+    response = requests.post('https://shiftheroes.fr/api/v1/plannings/' + nouveauPlanning + '/shifts/' + id_shift + '/reservations', headers=headers)
+
+
+"""start_liste = requests.get('https://shiftheroes.fr/api/v1/plannings?type=daily', headers=headers).json()
+    actual_liste = requests.get('https://shiftheroes.fr/api/v1/plannings?type=daily', headers=headers).json()
+
+while start_liste == actual_liste:
     actual_liste = requests.get('https://shiftheroes.fr/api/v1/plannings?type=daily', headers=headers).json() 
     time.sleep(1)
     
@@ -27,7 +44,7 @@ for i in crenauxDuPlanning:
     print("*****")
     response = requests.post('https://shiftheroes.fr/api/v1/plannings/' + id_planning + '/shifts/' + id_shift + '/reservations', headers=headers)
     print(response)
-    print("*****")
+    print("*****")"""
 
 
 # print(response.json()[2]['id']) #Get the id du troisieme type de planning dont l'index est 2
