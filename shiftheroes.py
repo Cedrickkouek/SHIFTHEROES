@@ -10,18 +10,22 @@ start_liste = requests.get('https://shiftheroes.fr/api/v1/plannings?type=daily',
 actual_liste = requests.get('https://shiftheroes.fr/api/v1/plannings?type=daily', headers=headers).json()
 
 while start_liste == actual_liste:
-    time.sleep(1)
+    actual_liste = requests.get('https://shiftheroes.fr/api/v1/plannings?type=daily', headers=headers).json()
     print(".", end="", flush=True)
-    actual_liste = requests.get('https://shiftheroes.fr/api/v1/plannings?type=daily', headers=headers).json() 
-    print(actual_liste)
+    time.sleep(1)
 
 nouveauPlanning = actual_liste[0]['id']
+
+print("New new planning available !!!!")
+print(nouveauPlanning)
+
 listeCrenaux = requests.get('https://shiftheroes.fr/api/v1/plannings/' + nouveauPlanning + '/shifts', headers=headers).json()
 
 for crenau in listeCrenaux:
-    id_shift =  crenau['id']
-    response = requests.post('https://shiftheroes.fr/api/v1/plannings/' + nouveauPlanning + '/shifts/' + id_shift + '/reservations', headers=headers)
+    response = requests.post('https://shiftheroes.fr/api/v1/plannings/' + nouveauPlanning  + '/shifts/' + crenau['id'] + '/reservations', headers=headers)
+    time.sleep(0.2)
 
+print("Reservation effectuée!")
 
 """start_liste = requests.get('https://shiftheroes.fr/api/v1/plannings?type=daily', headers=headers).json()
     actual_liste = requests.get('https://shiftheroes.fr/api/v1/plannings?type=daily', headers=headers).json()
